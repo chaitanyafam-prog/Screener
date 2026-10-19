@@ -9,4 +9,4 @@ services:
       - key: PYTHON_VERSION
         value: 3.12.13
       - key: THERAPY_TRACKER_URL
-        sync: false
+        value: https://speech-therapy-tracker.onrender.com/
