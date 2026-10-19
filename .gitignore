@@ -9,11 +9,11 @@ venv/
 __pycache__/
 *.pyc
 
-# Personal notebooks and trained model files
+# Training notebook and model artifacts are intentionally tracked in their project folders.
 *.ipynb
 *.pkl
+!backend/training/*.ipynb
+!backend/models/*.pkl
 
-# Keep the screener app's required model assets, but not local runtime output
-!screener/*.ipynb
-!screener/*.pkl
-screener/*.log
+# Local runtime output
+*.log

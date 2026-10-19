@@ -1,6 +1,7 @@
 import os
 import tempfile
 import warnings
+from pathlib import Path
 
 import joblib
 import librosa
@@ -9,13 +10,16 @@ import parselmouth
 from flask import Flask, jsonify, render_template, request
 from parselmouth.praat import call
 
-BASE_DIR = os.path.dirname(os.path.abspath(__file__))
+PROJECT_DIR = Path(__file__).resolve().parents[2]
+BACKEND_DIR = Path(__file__).resolve().parents[1]
+FRONTEND_DIR = PROJECT_DIR / 'frontend'
+MODEL_DIR = BACKEND_DIR / 'models'
 
 
 def _load_project_env():
-    env_path = os.path.join(os.path.dirname(BASE_DIR), '.env')
+    env_path = PROJECT_DIR / '.env'
     try:
-        with open(env_path, encoding='utf-8') as env_file:
+        with env_path.open(encoding='utf-8') as env_file:
             for line in env_file:
                 line = line.strip()
                 if line and not line.startswith('#') and '=' in line:
@@ -29,16 +33,21 @@ _load_project_env()
 
 warnings.filterwarnings('ignore')
 
-app = Flask(__name__)
+app = Flask(
+    __name__,
+    template_folder=str(FRONTEND_DIR),
+    static_folder=str(FRONTEND_DIR / 'assets'),
+    static_url_path='/assets',
+)
 app.config['MAX_CONTENT_LENGTH'] = 20 * 1024 * 1024  # 20 MB upload cap
 _proxies = int(os.environ.get('TRUSTED_PROXIES', '0') or 0)
 if _proxies:   # behind a hosting proxy, so request.remote_addr is the visitor and not the proxy
     from werkzeug.middleware.proxy_fix import ProxyFix
     app.wsgi_app = ProxyFix(app.wsgi_app, x_for=_proxies, x_proto=_proxies, x_host=_proxies)
 
-model = joblib.load(os.path.join(BASE_DIR, 'svm_final_combined.pkl'))
-imputer = joblib.load(os.path.join(BASE_DIR, 'imputer_final.pkl'))
-scaler = joblib.load(os.path.join(BASE_DIR, 'scaler_final.pkl'))
+model = joblib.load(MODEL_DIR / 'svm_final_combined.pkl')
+imputer = joblib.load(MODEL_DIR / 'imputer_final.pkl')
+scaler = joblib.load(MODEL_DIR / 'scaler_final.pkl')
 
 
 def extract_rich_features(path, sr=16000):

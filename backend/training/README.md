@@ -16,7 +16,7 @@ genuinely better.
 
 ## Setup (once)
 
-1. Upload this whole `model_training/` folder to Kaggle as a **private dataset** (e.g. `dysarthria-code`).
+1. Upload this whole `backend/training/` folder to Kaggle as a **private dataset** (e.g. `dysarthria-code`).
 2. In your notebook, add that dataset to the inputs.
 
 ## Step 1 (CPU, ~2 min): honest re-score of the current model

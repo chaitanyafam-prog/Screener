@@ -1,0 +1,12 @@
+services:
+  - type: web
+    name: speech-health-screener
+    runtime: python
+    plan: free
+    buildCommand: pip install -r backend/requirements.txt
+    startCommand: gunicorn --chdir backend/src app:app
+    envVars:
+      - key: PYTHON_VERSION
+        value: 3.12.13
+      - key: THERAPY_TRACKER_URL
+        sync: false
