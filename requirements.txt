@@ -1,0 +1,7 @@
+flask
+gunicorn
+numpy
+librosa
+praat-parselmouth
+scikit-learn==1.6.1
+joblib
