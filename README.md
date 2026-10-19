@@ -12,7 +12,7 @@ backend/src/         Flask API and shared backend code
 backend/models/      Model, imputer, and scaler
 backend/training/    Model evaluation and feature extraction tools
 frontend/            HTML, CSS, and JavaScript served by Flask
-backend/requirements.txt
+requirements.txt     Python dependencies
 render.yaml          Render deployment configuration
 ```
 
@@ -27,7 +27,7 @@ From the repository root:
 ```powershell
 py -m venv .venv
 .venv\Scripts\Activate.ps1
-python -m pip install -r backend/requirements.txt
+python -m pip install -r requirements.txt
 python backend/src/app.py
 ```
 
@@ -42,7 +42,7 @@ python -m unittest discover -s backend/src/shared -p "test_*.py"
 
 ## Deploy
 
-The `render.yaml` Blueprint installs `backend/requirements.txt` and starts the
+The `render.yaml` Blueprint installs `requirements.txt` and starts the
 Flask app with Gunicorn. Configure `THERAPY_TRACKER_URL` in Render to link to a
 public therapy tracker; leave it unset to hide that link outside localhost.
 

@@ -3,7 +3,7 @@ services:
     name: speech-health-screener
     runtime: python
     plan: free
-    buildCommand: pip install -r backend/requirements.txt
+    buildCommand: pip install -r requirements.txt
     startCommand: gunicorn --chdir backend/src app:app
     envVars:
       - key: PYTHON_VERSION
