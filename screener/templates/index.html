@@ -1,0 +1,111 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="theme-color" content="#F8E0C3">
+  <title>Speech pattern screener</title>
+  <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Comfortaa:wght@400;500;600;700&display=swap" rel="stylesheet">
+</head>
+<body>
+  <div class="page-shell">
+    <header class="topbar">
+      <a class="brand" href="/" aria-label="Speech Health home">
+        <span class="brand-mark" aria-hidden="true">
+          <svg viewBox="0 0 32 32" fill="none"><path d="M4 16h3l2.2-7 4.1 14 4.2-18 4 18 2.5-7H28" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+        </span>
+        <span class="brand-name">speech<span>health</span></span>
+      </a>
+      <span class="prototype-tag"><span></span> Prototype · not a diagnosis</span>
+    </header>
+
+    <main>
+      <section class="hero" aria-labelledby="page-title">
+        <div class="hero-copy">
+          <h1 id="page-title">Speech pattern<br><span>screener</span></h1>
+          <p class="hero-description">Upload a short voice recording to check for acoustic patterns that may be associated with dysarthria.</p>
+        </div>
+      </section>
+
+      <section class="notice" aria-label="Important information">
+        <span class="notice-icon" aria-hidden="true">i</span>
+        <p><strong>This is a screening aid, not a diagnosis.</strong> It cannot confirm or rule out dysarthria. If you have concerns about speech, talk with a qualified speech-language pathologist.</p>
+      </section>
+
+      <section class="workspace" aria-labelledby="upload-heading">
+        <div class="screening-panel">
+          <div class="section-heading">
+            <div><h2 id="upload-heading">Add a voice recording</h2><p>Choose a clear WAV file to begin.</p></div>
+          </div>
+
+          <label id="dropzone" class="dropzone" for="file-input">
+            <input id="file-input" class="visually-hidden" type="file" accept=".wav,audio/wav,audio/x-wav" aria-describedby="file-help">
+            <span class="upload-icon" aria-hidden="true">
+              <svg viewBox="0 0 24 24" fill="none"><path d="M12 15V3m0 0L7.5 7.5M12 3l4.5 4.5M4 15v4a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2v-4" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"/></svg>
+            </span>
+            <span class="drop-title">Drop your file here</span>
+            <span class="drop-sub">or <span class="browse-link">browse files</span></span>
+            <span class="file-format">WAV audio · up to 20 MB</span>
+          </label>
+          <p id="file-help" class="sr-only">Select a WAV audio file no larger than 20 megabytes.</p>
+
+          <div id="file-details" class="file-details" hidden>
+            <div class="file-icon" aria-hidden="true">WAV</div>
+            <div class="file-meta"><strong id="file-name"></strong><span id="file-size"></span></div>
+            <button id="remove-file" class="text-button" type="button" aria-label="Remove selected file">Remove</button>
+          </div>
+
+          <audio id="player" controls preload="metadata" hidden aria-label="Preview selected recording"></audio>
+
+          <button id="analyze" class="primary-button" type="button" disabled>
+            <span>Review speech patterns</span><span aria-hidden="true">→</span>
+          </button>
+
+          <div id="spinner" class="loading-state" hidden role="status" aria-live="polite">
+            <span class="spinner" aria-hidden="true"></span><span>Reviewing the recording… This may take a moment.</span>
+          </div>
+
+          <section id="result" class="result" hidden aria-live="polite" tabindex="-1">
+            <div class="result-heading"><span id="result-symbol" class="result-symbol" aria-hidden="true"></span><div><span class="result-kicker">SCREENING OUTPUT</span><h2 id="result-title"></h2></div></div>
+            <p id="result-text"></p>
+            <p id="result-score" class="result-score"></p>
+            <p class="result-disclaimer">This prototype result is not a diagnosis and should not be used on its own to make health decisions.</p>
+            {% if tracker_url %}
+            <a class="tracker-link" href="{{ tracker_url }}/directory">Browse clinicians by city or area <span aria-hidden="true">↗</span></a>
+            <p class="tracker-note">Browse the therapist directory and contact a clinic to book. You can create a tracker account later to receive exercises and send recordings to your clinician.</p>
+            {% endif %}
+          </section>
+
+          <div class="privacy-note">
+            <svg viewBox="0 0 20 20" fill="none" aria-hidden="true"><path d="M10 2.5 3.5 5v4.6c0 4.1 2.8 6.8 6.5 7.9 3.7-1.1 6.5-3.8 6.5-7.9V5L10 2.5Z" stroke="currentColor" stroke-width="1.4"/><path d="m7.3 9.8 1.8 1.8 3.7-3.8" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round"/></svg>
+            <span>Your recording is processed for this screening and then removed from the app server.</span>
+          </div>
+        </div>
+
+        <aside class="guide-panel" aria-labelledby="guide-heading">
+          <p class="eyebrow">Before you begin</p>
+          <h2 id="guide-heading">A few tips for a clear recording</h2>
+          <ul class="tips-list">
+            <li><span><strong>Choose a quiet place</strong><small>Reduce background noise where possible.</small></span></li>
+            <li><span><strong>Use your natural voice</strong><small>Speak comfortably; no need to project.</small></span></li>
+            <li><span><strong>Check before uploading</strong><small>Make sure you have permission to use this recording.</small></span></li>
+          </ul>
+          <div class="guide-footer"><span class="guide-pulse"></span><span>Usually takes under a minute</span></div>
+        </aside>
+      </section>
+
+      <section id="directory-section" class="clinician-section" aria-labelledby="clinician-label">
+        <div class="clinician-intro"><p class="eyebrow">Next steps</p><h2 id="clinician-label">Browse the clinician directory</h2><p>Choose a city or area to see listed clinics, contact details, and online appointment booking options.</p>
+        {% if tracker_url %}<a class="tracker-link" href="{{ tracker_url }}/directory">Open the clinician directory <span aria-hidden="true">↗</span></a>{% endif %}</div>
+      </section>
+    </main>
+
+    <footer class="site-footer"><span>Speech health screening prototype</span><span>For education and demonstration only</span></footer>
+  </div>
+
+  <script src="{{ url_for('static', filename='script.js') }}"></script>
+</body>
+</html>
