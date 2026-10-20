@@ -14,7 +14,7 @@ import urllib.request
 
 from itsdangerous import BadSignature, URLSafeTimedSerializer
 
-import places
+from . import places
 
 SALT = "screening-link-v1"
 TOKEN_MAX_AGE = 30 * 60  # seconds; long enough to pick a recording, short enough to be low risk

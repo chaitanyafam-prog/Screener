@@ -72,10 +72,11 @@
             <div class="result-heading"><span id="result-symbol" class="result-symbol" aria-hidden="true"></span><div><span class="result-kicker">SCREENING OUTPUT</span><h2 id="result-title"></h2></div></div>
             <p id="result-text"></p>
             <p id="result-score" class="result-score"></p>
+            <p id="tracker-status" class="tracker-note" hidden></p>
             <p class="result-disclaimer">This prototype result is not a diagnosis and should not be used on its own to make health decisions.</p>
             {% if tracker_url %}
             <a class="tracker-link" href="{{ tracker_url }}/directory">Browse clinicians by city or area <span aria-hidden="true">↗</span></a>
-            <p class="tracker-note">Browse the therapist directory and contact a clinic to book. You can create a tracker account later to receive exercises and send recordings to your clinician.</p>
+            <p class="tracker-note">Browse clinicians, connect with a therapist, and manage therapy exercises and recordings in the tracker.</p>
             {% endif %}
           </section>
 

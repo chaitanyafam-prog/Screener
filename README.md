@@ -31,8 +31,12 @@ python -m pip install -r requirements.txt
 python backend/src/app.py
 ```
 
-The app is available at `http://127.0.0.1:5000`. Copy `.env.example` to `.env`
-to configure the optional therapy tracker link.
+The app is available at `http://127.0.0.1:5000`. Copy `.env.example` to `.env` to configure the therapy tracker connection.
+To securely save screening results to a patient account, configure the same
+random `SCREENING_SHARED_SECRET` in both apps. The tracker should open the
+screener with a short-lived signed patient token in the `token` query
+parameter. Only the prediction and model score are sent to the tracker; audio
+recordings are not.
 
 ## Tests
 
@@ -43,8 +47,9 @@ python -m unittest discover -s backend/src/shared -p "test_*.py"
 ## Deploy
 
 The `render.yaml` Blueprint installs `requirements.txt` and starts the
-Flask app with Gunicorn. Configure `THERAPY_TRACKER_URL` in Render to link to a
-public therapy tracker; leave it unset to hide that link outside localhost.
+Flask app with Gunicorn. Configure `THERAPY_TRACKER_URL` and the same
+`SCREENING_SHARED_SECRET` in both Render services to link the screener with the
+tracker. Leave the secret unset to disable result transfer.
 
 ## Training
 

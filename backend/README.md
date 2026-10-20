@@ -8,6 +8,15 @@ Patients can later create a tracker account, connect with a clinician, receive a
 
 On localhost, the tracker link defaults to `http://localhost:5001`. For a public deployment, set `THERAPY_TRACKER_URL` to the deployed tracker's base URL.
 
+To attach results to a logged-in patient, configure the same randomly generated
+`SCREENING_SHARED_SECRET` in both apps. The tracker must create a short-lived
+signed patient token and open the screener with it as the `token` query
+parameter. After a prediction, the screener validates the token and sends only
+the prediction and model score to the tracker's `POST /api/screenings` endpoint.
+The WAV recording is processed temporarily by the screener and is never sent to
+the tracker. Without a valid token or shared secret, the public screening flow
+continues without transferring results.
+
 A machine learning tool that screens speech recordings for acoustic markers
 associated with dysarthria, using classical acoustic/prosodic features
 (MFCCs, jitter, shimmer, harmonics-to-noise ratio, formants) and a Support

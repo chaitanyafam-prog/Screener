@@ -33,6 +33,11 @@ _load_project_env()
 
 warnings.filterwarnings('ignore')
 
+if __package__:
+    from .shared.linking import post_screening, read_token, secret
+else:
+    from shared.linking import post_screening, read_token, secret
+
 app = Flask(
     __name__,
     template_folder=str(FRONTEND_DIR),
@@ -124,9 +129,24 @@ def predict():
         pred = int(model.predict(feat)[0])
         prob = model.predict_proba(feat)[0]
         confidence = round(float(prob[pred]) * 100, 1)
+        token = request.form.get('token', '').strip()
+        tracker_status = 'not_linked'
+        if token:
+            key = secret()
+            if not key:
+                tracker_status = 'unavailable'
+            elif read_token(token, key) is not None:
+                tracker_status = (
+                    'saved'
+                    if post_screening(_tracker_url(), token, pred, confidence, key)
+                    else 'failed'
+                )
+            else:
+                tracker_status = 'invalid_link'
         return jsonify(
             prediction=pred,
             confidence=confidence,
+            tracker_status=tracker_status,
         )
     except Exception as e:
         return jsonify(error=f'Could not process this file: {e}'), 422

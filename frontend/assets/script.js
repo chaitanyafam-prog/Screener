@@ -12,6 +12,7 @@ const resultSymbol = document.getElementById('result-symbol');
 const resultTitle = document.getElementById('result-title');
 const resultText = document.getElementById('result-text');
 const resultScore = document.getElementById('result-score');
+const trackerStatus = document.getElementById('tracker-status');
 
 const MAX_FILE_BYTES = 20 * 1024 * 1024;
 let selectedFile = null;
@@ -49,6 +50,7 @@ function clearFile() {
   fileDetails.hidden = true;
   analyzeBtn.disabled = true;
   result.hidden = true;
+  trackerStatus.hidden = true;
 }
 
 function setFile(file) {
@@ -79,6 +81,7 @@ function setFile(file) {
   player.hidden = false;
   analyzeBtn.disabled = false;
   result.hidden = true;
+  trackerStatus.hidden = true;
 }
 
 input.addEventListener('change', () => setFile(input.files[0]));
@@ -106,14 +109,29 @@ analyzeBtn.addEventListener('click', async () => {
   analyzeBtn.querySelector('span').textContent = 'Reviewing…';
   spinner.hidden = false;
   result.hidden = true;
+  trackerStatus.hidden = true;
 
   const form = new FormData();
   form.append('file', selectedFile);
+  const token = new URLSearchParams(window.location.search).get('token');
+  if (token) form.append('token', token);
 
   try {
     const response = await fetch('/predict', { method: 'POST', body: form });
     const data = await response.json();
     if (!response.ok) throw new Error(data.error || 'The recording could not be processed. Please try again.');
+
+    const trackerMessages = {
+      saved: 'Screening result securely sent to your therapy tracker.',
+      failed: 'Screening is complete, but the result could not be saved to the tracker. Please try again from the tracker.',
+      invalid_link: 'This tracker link has expired or is invalid. Reopen the screener from your tracker to save this result.',
+      unavailable: 'Screening is complete, but tracker result transfer is not configured.',
+    };
+    const statusMessage = trackerMessages[data.tracker_status];
+    if (statusMessage) {
+      trackerStatus.textContent = statusMessage;
+      trackerStatus.hidden = false;
+    }
 
     const modelScore = `Model score: ${data.confidence}%. This is not the likelihood of a condition.`;
     if (data.prediction === 1) {
